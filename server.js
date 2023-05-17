@@ -1,17 +1,26 @@
-const io = require('socket.io')(3000)
+const express = require('express');
+const app = express();
 
-const users = {}
+const http = require('http').createServer(app);
 
-io.on('connection', socket => {
-  socket.on('new-user', name => {
-    users[socket.id] = name
-    socket.broadcast.emit('user-connected', name)
-  })
-  socket.on('send-chat-message', message => {
-    socket.broadcast.emit('chat-message', { message: message, name: users[socket.id] })
-  })
-  socket.on('disconnect', () => {
-    socket.broadcast.emit('user-disconnected', users[socket.id])
-    delete users[socket.id]
-  })
+const io = require('socket.io')(http);
+
+const PORT = process.env.PORT || 3000;
+
+app.use(express.static(__dirname + '/public'))
+
+app.get('/', (req,res) => {
+    res.sendFile(__dirname + '/index.html');
+})
+
+http.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+})
+
+io.on('connection', (socket) => {
+    console.log('Connected...');
+
+    socket.on('message', (msg) => {
+        socket.broadcast.emit('message', msg)
+    })
 })

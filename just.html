@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the todo list</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arima:wght@500;700&family=Mukta:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="todo.css">
+</head>
+
+<body>
+    <header>
+        <h1>Todo</h1>
+    </header>
+    <main>
+        <article>
+            <section><p>Projects</p></section>
+            <section class="todo inline-block">
+                <h2>To-Do</h2>
+                <form action="">
+                <input type="text" id="task" class="margin-auto">
+                <button type="button" id="add" class="margin-auto" onclick="addTask()">+</button>
+                </form>
+                <span id="error"></span>
+                <ol class="toDo">
+                </ol>
+            </section>
+            <section class="inProgress inline-block">
+                <h2>In-progress</h2>
+                <ol class="Inprogress">
+
+                </ol>
+            </section>
+            <section class="completed inline-block">
+                <h2>Completed</h2>
+                <ol class="Completed">
+
+                </ol>
+            </section>
+        </article>
+    </main>
+    <script src="td.js"></script>
+</body>
+
+</html>
