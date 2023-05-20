@@ -1,37 +1,41 @@
-const express = require('express');
+const express = require("express");
+const socket = require("socket.io");
+
+// App setup
+const PORT = 5000;
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+const server = app.listen(PORT, function () {
+  console.log(`Listening on port ${PORT}`);
+  console.log(`http://localhost:${PORT}`);
 });
 
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
-// });
+// Static files
+app.use(express.static("public"));
 
+// Socket setup
+const io = socket(server);
 
+const activeUsers = new Set();
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+io.on("connection", function (socket) {
+  console.log("Made socket connection");
+
+  socket.on("new user", function (data) {
+    socket.userId = data;
+    activeUsers.add(data);
+    io.emit("new user", [...activeUsers]);
   });
-});
-socket.on('joining msg', (username) => {
-  name = username;
-  io.emit('chat message', `---${name} joined the chat---`);
-});
 
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
+  socket.on("disconnect", () => {
+    activeUsers.delete(socket.userId);
+    io.emit("user disconnected", socket.userId);
   });
-});
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+  socket.on("chat message", function (data) {
+    io.emit("chat message", data);
+  });
+  
+  socket.on("typing", function (data) {
+    socket.broadcast.emit("typing", data);
+  });
 });
